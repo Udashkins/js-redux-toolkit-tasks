@@ -8,9 +8,21 @@ const logger = (store) => (next) => (action) => {
 };
 
 const addDate = (store) => (next) => (action) => {
-  // BEGIN (write your solution here)
-
-  // END
+  
+  if (action.type === 'TASK_ADD' && action.payload && action.payload.task) {
+    const modifiedAction = {
+      ...action,
+      payload: {
+        ...action.payload,
+        task: {
+          ...action.payload.task,
+          text: `Задача на ${new Date().toLocaleDateString('ru-RU')}: ${action.payload.task.text}`
+        }
+      }
+    };
+    return next(modifiedAction);
+  }
+  return next(action);
 };
 
 export default { logger, addDate };
