@@ -14,7 +14,22 @@ const commentsSlice = createSlice({
     addComment: commentsAdapter.addOne,
   },
   // BEGIN (write your solution here)
-
+  extraReducers: (builder) => {
+    // Удаление комментариев при удалении пользователя
+    builder.addCase(usersActions.removeUser, (state, { payload }) => {
+      const allComments = commentsAdapter.getSelectors().selectAll(state);
+      const userCommentsIds = allComments
+        .filter((comment) => comment.author === payload)
+        .map((comment) => comment.id);
+      
+      commentsAdapter.removeMany(state, userCommentsIds);
+    });
+    
+    // Удаление комментариев при удалении поста
+    builder.addCase(postsActions.removePost, (state, { payload }) => {
+      commentsAdapter.removeMany(state, payload.comments);
+    });
+  },
   // END
 });
 
